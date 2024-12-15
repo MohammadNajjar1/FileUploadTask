@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Nullable>enable</Nullable>
+    <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net6.0</TargetFramework>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="System.Xml.Linq" />
+    <Using Include="System.Text.Json" />
+    <Using Include="System.Reflection" />
+    <Using Include="System.Globalization" />
+    <Using Include="System.Linq.Expressions" />
+    <Using Include="System.Collections.Concurrent" />
+    <Using Include="System.Text.RegularExpressions" />
+    <Using Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <SourceRoot Remove="$(NugetPackageRoot)" />
+    <SourceRoot Include="$(ProjectDir)" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,53 @@
+@model ModuleModel
+@{
+    PropertyInfo[] properties = Model
+        .ViewProperties[""]
+        .OrderBy(property => property.Name)
+        .ToArray();
+
+    String[] indexes = Model.Indexes["Create"]
+        .Concat(Model.Indexes["Edit"])
+        .Select(property => property.Name)
+        .Distinct()
+        .OrderBy(property => property)
+        .ToArray();
+}
+{
+    "Titles": {
+        @for (Int32 i = 0; i < properties.Length; i++)
+        {
+            String title = Model.Relations.GetValueOrDefault(properties[i].Name, null) is String ? properties[i].Name.Substring(0, properties[i].Name.Length - 2).Humanize() : properties[i].Name.Humanize();
+
+            if (i + 1 < properties.Length)
+            {
+        @:"@properties[i].Name": "@title",
+            }
+            else
+            {
+        @:"@properties[i].Name": "@title"
+            }
+        }
+    @if (indexes.Any())
+    {
+    @:},
+    @:"Validations": {
+        @for (Int32 i = 0; i < indexes.Length; i++)
+        {
+            String title = indexes[i].Humanize();
+
+            if (i + 1 < indexes.Length)
+            {
+        @:"Unique@(indexes[i])": "@title is already being used.",
+            }
+            else
+            {
+        @:"Unique@(indexes[i])": "@title is already being used."
+            }
+        }
+    @:}
+    }
+    else
+    {
+    @:}
+    }
+}

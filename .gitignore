@@ -1,0 +1,12 @@
+/src/AspNetCore.Web/wwwroot/css/**/*.min.css
+/src/AspNetCore.Web/wwwroot/js/**/*.min.js
+/src/AspNetCore.Web/node_modules/
+
+/src/AspNetCore.Web/Logs/
+.vscode/
+.vs/
+bin/
+obj/
+
+*.user
+*.suo

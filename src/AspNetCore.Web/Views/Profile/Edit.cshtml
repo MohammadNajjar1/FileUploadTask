@@ -1,0 +1,71 @@
+@model ProfileEditView
+
+<div class="col">
+    <div class="widget-box">
+        <div class="widget-header">
+            <span class="icon fa fa-th-list"></span>
+            <h5>@Resource.ForHeader("Profile")</h5>
+            <div class="widget-header-buttons">
+                <authorize action="@nameof(Profile.Delete)">
+                    <a asp-action="@nameof(Profile.Delete)" class="btn">
+                        <span class="fa fa-times"></span>
+                        <span class="text">@Resource.ForAction(nameof(Profile.Delete))</span>
+                    </a>
+                </authorize>
+            </div>
+        </div>
+        <div class="widget-content">
+            <form asp-antiforgery="true">
+                <div class="form-group row">
+                    <div class="control-label col-md-4 col-xl-2">
+                        <label asp-for="Username"></label>
+                    </div>
+                    <div class="control-content col-md-8 col-xl-4">
+                        <input asp-for="Username" />
+                    </div>
+                    <div class="control-validation offset-md-4 col-md-8 offset-xl-0 col-xl-6">
+                        <span asp-validation-for="Username"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="control-label col-md-4 col-xl-2">
+                        <label asp-for="Password"></label>
+                    </div>
+                    <div class="control-content col-md-8 col-xl-4">
+                        <input asp-for="Password" type="password" />
+                    </div>
+                    <div class="control-validation offset-md-4 col-md-8 offset-xl-0 col-xl-6">
+                        <span asp-validation-for="Password"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="control-label col-md-4 col-xl-2">
+                        <label asp-for="NewPassword"></label>
+                    </div>
+                    <div class="control-content col-md-8 col-xl-4">
+                        <input asp-for="NewPassword" type="password" autocomplete="new-password" />
+                    </div>
+                    <div class="control-validation offset-md-4 col-md-8 offset-xl-0 col-xl-6">
+                        <span asp-validation-for="NewPassword"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="control-label col-md-4 col-xl-2">
+                        <label asp-for="Email"></label>
+                    </div>
+                    <div class="control-content col-md-8 col-xl-4">
+                        <input asp-for="Email" class="text-lowercase" inputmode="email" />
+                    </div>
+                    <div class="control-validation offset-md-4 col-md-8 offset-xl-0 col-xl-6">
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="control-actions col-xl-6">
+                        <button class="btn btn-primary">@Resource.ForAction("Submit")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

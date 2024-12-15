@@ -1,0 +1,82 @@
+@model ModuleModel
+using Microsoft.AspNetCore.Mvc;
+using AspNetCore.Components.Security;
+using AspNetCore.Objects;
+using AspNetCore.Services;
+using AspNetCore.Validators;
+
+namespace @Model.ControllerNamespace;
+
+@if (!String.IsNullOrWhiteSpace(Model.Area))
+{
+@:[Area(nameof(Area.@(Model.Area)))]
+}
+public class @Model.Controller : ValidatedController<@(Model.Model)Validator, @(Model.Model)Service>
+{
+    public @(Model.Controller)(@(Model.Model)Validator validator, @(Model.Model)Service service)
+        : base(validator, service)
+    {
+    }
+
+    [HttpGet]
+    public ViewResult Index()
+    {
+        return View(Service.GetViews());
+    }
+
+    [HttpGet]
+    public ViewResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public ActionResult Create(@Model.Views["Create"] @Model.VarName)
+    {
+        if (!Validator.CanCreate(@Model.VarName))
+            return View(@Model.VarName);
+
+        Service.Create(@Model.VarName);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    [AuthorizeAs(nameof(Index))]
+    public ActionResult Details(Int64 id)
+    {
+        return NotEmptyView(Service.Get<@Model.Views["Details"]>(id));
+    }
+
+    [HttpGet]
+    public ActionResult Edit(Int64 id)
+    {
+        return NotEmptyView(Service.Get<@Model.Views["Edit"]>(id));
+    }
+
+    [HttpPost]
+    public ActionResult Edit(@Model.Views["Edit"] @Model.VarName)
+    {
+        if (!Validator.CanEdit(@Model.VarName))
+            return View(@Model.VarName);
+
+        Service.Edit(@Model.VarName);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public ActionResult Delete(Int64 id)
+    {
+        return NotEmptyView(Service.Get<@Model.Views["Delete"]>(id));
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    public RedirectToActionResult DeleteConfirmed(Int64 id)
+    {
+        Service.Delete(id);
+
+        return RedirectToAction(nameof(Index));
+    }
+}

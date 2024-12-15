@@ -1,0 +1,104 @@
+@model ModuleModel
+@if (Model.Indexes["Create"].Any() || Model.Indexes["Edit"].Any())
+{
+@:using AspNetCore.Data;
+@:using AspNetCore.Objects;
+@:using AspNetCore.Resources;
+}
+else
+{
+@:using AspNetCore.Data;
+@:using AspNetCore.Objects;
+}
+
+namespace AspNetCore.Validators;
+
+public class @(Model.Model)Validator : AValidator
+{
+    public @(Model.Model)Validator(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
+    {
+    }
+
+    public Boolean CanCreate(@Model.Views["Create"] view)
+    {
+        @foreach (PropertyInfo property in Model.Indexes["Create"])
+        {
+            if (property == Model.Indexes["Create"][0])
+            {
+        @:Boolean isValid = IsUnique@(property.Name)(0, view.@(property.Name));
+            }
+            else
+            {
+        @:isValid &= IsUnique@(property.Name)(0, view.@(property.Name));
+            }
+        }
+        @if (Model.Indexes["Create"].Any())
+        {
+        @:isValid &= ModelState.IsValid;
+@:
+        @:return isValid;
+        }
+        else
+        {
+        @:return ModelState.IsValid;
+        }
+    }
+    public Boolean CanEdit(@Model.Views["Edit"] view)
+    {
+        @foreach (PropertyInfo property in Model.Indexes["Edit"])
+        {
+            if (property == Model.Indexes["Edit"][0])
+            {
+        @:Boolean isValid = IsUnique@(property.Name)(view.Id, view.@(property.Name));
+            }
+            else
+            {
+        @:isValid &= IsUnique@(property.Name)(view.Id, view.@(property.Name));
+            }
+        }
+        @if (Model.Indexes["Edit"].Any())
+        {
+        @:isValid &= ModelState.IsValid;
+@:
+        @:return isValid;
+        }
+        else
+        {
+        @:return ModelState.IsValid;
+        }
+    }
+    @if (Model.Indexes["Create"].Any() || Model.Indexes["Edit"].Any())
+    {
+@:
+        PropertyInfo[] properties = Model.Indexes["Create"].Concat(Model.Indexes["Edit"]).ToArray();
+        properties = properties.GroupBy(property => property.Name).Select(group => group.First()).ToArray();
+        properties = properties.OrderByDescending(property => property.Name.Length).ThenByDescending(property => property.Name).ToArray();
+
+        @foreach (PropertyInfo property in properties)
+        {
+            String name = Regex.Split(property.Name, "(?=[A-Z])").Last().ToLower();
+
+            if (Nullable.GetUnderlyingType(property.PropertyType) is Type nullableType)
+            {
+    @:private Boolean IsUnique@(property.Name)(Int64 id, @(nullableType.Name)? @name)
+            }
+            else
+            {
+    @:private Boolean IsUnique@(property.Name)(Int64 id, @property.PropertyType.Name @name)
+            }
+    @:{
+    @:    Boolean isUnique = !UnitOfWork
+    @:        .Select<@Model.Model>()
+    @:        .Any(@Model.VarName =>
+    @:            @(Model.VarName).Id != id &&
+    @:            @(Model.VarName).@(property.Name) == @name);
+@:
+    @:    if (!isUnique)
+    @:        ModelState.AddModelError(nameof(@(Model.Views[""]).@(property.Name)), Validation.For<@Model.Views[""]>("Unique@(property.Name)"));
+@:
+    @:    return isUnique;
+    @:}
+        }
+    }
+}

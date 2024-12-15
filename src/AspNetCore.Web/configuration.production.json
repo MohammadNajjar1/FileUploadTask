@@ -1,0 +1,13 @@
+{
+    "Cookies": {
+        "Antiforgery": ".AspNetCore-Prod-Token",
+        "Auth": ".AspNetCore-Prod-Auth",
+        "TempData": ".AspNetCore-Prod-Temp",
+        "Session": ".AspNetCore-Prod-Session"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Warning"
+        }
+    }
+}

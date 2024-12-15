@@ -1,0 +1,34 @@
+@model IQueryable<AccountView>
+
+<div class="col">
+    <div class="widget-box">
+        <div class="widget-header">
+            <span class="icon fa fa-th"></span>
+            <h5>@Resource.ForHeader("Accounts")</h5>
+            <div class="widget-header-buttons">
+                <authorize action="@nameof(Accounts.Create)">
+                    <a asp-action="@nameof(Accounts.Create)" class="btn">
+                        <span class="far fa-file"></span>
+                        <span class="text">@Resource.ForAction(nameof(Accounts.Create))</span>
+                    </a>
+                </authorize>
+            </div>
+        </div>
+        <div class="widget-content">
+            @(Html
+                .Grid(Model)
+                .Build(columns =>
+                {
+                    columns.AddAction(nameof(Accounts.Details), "fa fa-info");
+                    columns.AddAction(nameof(Accounts.Edit), "fa fa-pencil-alt");
+
+                    columns.AddProperty(model => model.Username);
+                    columns.AddProperty(model => model.Email);
+                    columns.AddBoolean(model => model.IsLocked);
+                    columns.AddProperty(model => model.RoleTitle);
+                })
+                .ApplyDefaults()
+            )
+        </div>
+    </div>
+</div>

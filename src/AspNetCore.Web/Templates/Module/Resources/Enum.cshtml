@@ -1,0 +1,19 @@
+@model String[]
+@{
+    String[] names = Model.OrderBy(name => name).ToArray();
+}
+{
+    "Titles": {
+        @for (Int32 i = 0; i < names.Length; i++)
+        {
+            if (i + 1 < names.Length)
+            {
+        @:"@names[i]": "@names[i].Humanize()",
+            }
+            else
+            {
+        @:"@names[i]": "@names[i].Humanize()"
+            }
+        }
+    }
+}

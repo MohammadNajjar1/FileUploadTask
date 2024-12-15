@@ -1,0 +1,27 @@
+@model SiteMapNode[]
+
+<ul>
+    @for (Int32 i = 0; i < Model.Length; i++)
+    {
+        SiteMapNode node = Model[i];
+        Boolean submenu = node.Children.Any();
+        String menu = submenu ? "submenu" : "";
+        menu += node.IsActive ? " active" : "";
+        menu += submenu && node.IsActive ? " open" : "";
+
+        <li class="@menu.TrimStart()">
+            <a href="@node.Form(Url)">
+                <span class="icon @node.IconClass"></span>
+                <span class="text">@Resource.ForSiteMap(node.Path)</span>
+                @if (submenu)
+                {
+                    <span class="toggle fa fa-angle-right"></span>
+                }
+            </a>
+            @if (submenu)
+            {
+                <partial name="_SiteMap" model="@node.Children" />
+            }
+        </li>
+    }
+</ul>

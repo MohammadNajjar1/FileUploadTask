@@ -1,0 +1,25 @@
+@model AccountRecoveryView
+
+<div class="title text-end">@Resource.ForPage(ViewContext.RouteData.Values)</div>
+
+<hr />
+
+<form asp-antiforgery="true">
+    <partial name="_AuthAlerts" />
+
+    <div class="input-group">
+        <span class="fa fa-envelope"></span>
+        <input asp-for="Email" asp-placeholder class="text-lowercase" inputmode="email" />
+        <span class="input-error fa fa-exclamation-triangle" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="-"></span>
+    </div>
+
+    <div class="d-grid">
+        <button class="btn btn-primary mt-3 mb-2">@Resource.ForAction(nameof(Auth.Recover))</button>
+    </div>
+</form>
+
+<hr />
+
+<div class="actions text-end">
+    <a asp-action="@nameof(Auth.Login)" class="title fa fa-sign-in-alt" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="@Resource.ForAction(nameof(Auth.Login))"></a>
+</div>

@@ -1,0 +1,37 @@
+{
+    "Cookies": {
+        "Antiforgery": ".AspNetCore-Token",
+        "Auth": ".AspNetCore-Auth",
+        "TempData": ".AspNetCore-Temp",
+        "Session": ".AspNetCore-Session"
+    },
+    "Data": {
+        "Connection": "Server=(localdb)\\mssqllocaldb;Database=AspNetCore;Trusted_Connection=True;MultipleActiveResultSets=True"
+    },
+    "Languages": {
+        "Default": "en",
+        "Supported": [
+            {
+                "Name": "English",
+                "Culture": "en-GB",
+                "Abbreviation": "en"
+            }
+        ]
+    },
+    "Logging": {
+        "File": {
+            "Path": "Logs/log.txt",
+            "RollSize": 5242880
+        }
+    },
+    "Mail": {
+        "Port": 587,
+        "EnableSsl": true,
+        "Host": "smtp.gmail.com",
+        "Sender": "change-it@gmail.com",
+        "Password": "ChangeIt"
+    },
+    "SiteMap": {
+        "Path": "mvc.sitemap"
+    }
+}

@@ -1,0 +1,49 @@
+@model RoleView
+
+<div class="col">
+    <div class="widget-box readonly">
+        <div class="widget-header">
+            <span class="icon fa fa-th-list"></span>
+            <h5>@Resource.ForHeader("Role")</h5>
+            <div class="widget-header-buttons">
+                <authorize action="@nameof(Roles.Details)">
+                    <a asp-action="@nameof(Roles.Details)" asp-route-id="@Model.Id" class="btn">
+                        <span class="fa fa-info"></span>
+                        <span class="text">@Resource.ForAction(nameof(Roles.Details))</span>
+                    </a>
+                </authorize>
+                <authorize action="@nameof(Roles.Edit)">
+                    <a asp-action="@nameof(Roles.Edit)" asp-route-id="@Model.Id" class="btn">
+                        <span class="fa fa-pencil-alt"></span>
+                        <span class="text">@Resource.ForAction(nameof(Roles.Edit))</span>
+                    </a>
+                </authorize>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="form-group row">
+                <div class="control-label col-md-4 col-xl-2">
+                    <label asp-for="Title"></label>
+                </div>
+                <div class="control-content col-md-8 col-xl-4">
+                    <input asp-for="Title" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="control-label col-md-4 col-xl-2">
+                    <label asp-for="Permissions"></label>
+                </div>
+                <div class="control-content col-md-8 col-xl-4">
+                    <div mvc-tree-for="Permissions" hide-depth="3"></div>
+                </div>
+            </div>
+            <form asp-antiforgery="true">
+                <div class="form-group row">
+                    <div class="control-actions col-xl-6">
+                        <button class="btn btn-primary">@Resource.ForAction("Submit")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

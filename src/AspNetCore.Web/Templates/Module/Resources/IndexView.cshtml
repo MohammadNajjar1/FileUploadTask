@@ -1,0 +1,24 @@
+@model ModuleModel
+@{
+    PropertyInfo[] properties = Model
+        .ViewProperties["Index"]
+        .OrderBy(property => property.Name)
+        .ToArray();
+}
+{
+    "Titles": {
+        @for (Int32 i = 0; i < properties.Length; i++)
+        {
+            String title = Model.Relations.GetValueOrDefault(properties[i].Name, null) == null ? properties[i].Name.Humanize() : properties[i].Name.Substring(0, properties[i].Name.Length - 2).Humanize();
+
+            if (i + 1 < properties.Length)
+            {
+        @:"@properties[i].Name": "@title",
+            }
+            else
+            {
+        @:"@properties[i].Name": "@title"
+            }
+        }
+    }
+}

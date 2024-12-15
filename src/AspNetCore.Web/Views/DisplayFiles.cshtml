@@ -1,0 +1,23 @@
+@model IEnumerable<AspNetCore.Objects.Models.UploadedFile>
+
+<h2>Uploaded Files</h2>
+
+<table>
+	<thead>
+		<tr>
+			<th>File Name</th>
+			<th>Description</th>
+			<th>Upload Date</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var file in Model)
+		{
+			<tr>
+				<td><a asp-action="DownloadFile" asp-route-id="@file.Id">@file.OriginalFileName</a></td>
+				<td>@file.Description</td>
+				<td>@file.UploadDate</td>
+			</tr>
+		}
+	</tbody>
+</table>

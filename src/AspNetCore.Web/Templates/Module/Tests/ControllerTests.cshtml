@@ -1,0 +1,375 @@
+@model ModuleModel
+using Microsoft.EntityFrameworkCore;
+using AspNetCore.Data;
+using AspNetCore.Objects;
+using AspNetCore.Services;
+using AspNetCore.Validators;
+
+namespace @Model.ControllerNamespace;
+
+[Collection("Database access")]
+public class @(Model.Controller)Tests : IDisposable
+{
+    private DbContext context;
+    private @Model.Model model;
+    private @Model.Model otherModel;
+    private @Model.Controller controller;
+
+    public @(Model.Controller)Tests()
+    {
+        context = TestingContext.Create();
+        UnitOfWork unitOfWork = new(TestingContext.Create(), TestingContext.Mapper);
+        controller = Substitute.ForPartsOf<@Model.Controller>(new @(Model.Model)Validator(unitOfWork), new @(Model.Model)Service(unitOfWork));
+
+        context.Drop().Add(model = ObjectsFactory.Create@(Model.Model)(-1));
+        context.Add(otherModel = ObjectsFactory.Create@(Model.Model)(-2));
+        context.SaveChanges();
+
+        controller.Initialize();
+    }
+    public void Dispose()
+    {
+        controller.Dispose();
+        context.Dispose();
+    }
+
+    [Fact]
+    public void Index_@(Model.Models)()
+    {
+        @(Model.Model)[] expected = context.Set<@Model.Model>().OrderByDescending(@Model.VarName => @(Model.VarName).Id).ToArray();
+        @(Model.Views["Index"])[] actual = controller.Index().Returns<IQueryable<@Model.Views["Index"]>>().ToArray();
+
+        for (Int32 i = 0; i < expected.Length || i < actual.Length; i++)
+        {
+@foreach (PropertyInfo property in Model.AllViewProperties["Index"].OrderByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+{
+        if (Model.AllProperties.Any(prop => prop.Name == property.Name))
+        {
+            @:Assert.Equal(expected[i].@property.Name, actual[i].@property.Name);
+        }
+        else
+        {
+            @:Assert.Equal(expected[i].@(String.Join(".", Regex.Split(property.Name, "(?<=[a-z])(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"))), actual[i].@property.Name);
+        }
+}
+        }
+        @if (Model.ViewProperties["Index"].Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+    }
+
+    [Fact]
+    public void Create_View()
+    {
+        Assert.Null(controller.Create().Model);
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+    }
+
+    [Fact]
+    public void Create_InvalidModelState_Error()
+    {
+        controller.ModelState.AddModelError("Test", "Error");
+
+        controller.Returns(controller.Create, ObjectsFactory.Create@(Model.Views["Create"])(model.Id));
+
+        controller.ModelState.IsSingle("Test", "Error");
+        Assert.Empty(controller.Alerts);
+    }
+    @foreach (PropertyInfo index in Model.Indexes["Create"])
+    {
+@:
+    @:[Fact]
+    @:public void Create_Used@(index.Name)_Error()
+    @:{
+    @:    @Model.Views["Create"] @Model.VarName = ObjectsFactory.Create@(Model.Views["Create"])(model.Id);
+        if (index.PropertyType == typeof(String))
+        {
+    @:    @(Model.VarName).@(index.Name) = model.@(index.Name).ToUpper();
+        }
+        else
+        {
+    @:    @(Model.VarName).@(index.Name) = model.@(index.Name);
+        }
+@:
+    @:    controller.Returns(controller.Create, @Model.VarName);
+@:
+    @:    controller.ModelState.IsSingle<@Model.Views["Create"]>(nameof(@(Model.Views["Create"]).@(index.Name)), "Unique@(index.Name)");
+    @:    Assert.Empty(controller.Alerts);
+    @:}
+    }
+
+    [Fact]
+    public void Create_@(Model.ShortName)()
+    {
+        @Model.Views["Create"] @Model.VarName = ObjectsFactory.Create@(Model.Views["Create"])(model.Id);
+
+        controller.Create(@Model.VarName);
+
+        @Model.Model actual = context.Db<@Model.Model>().Single(@Model.VarName => @(Model.VarName).Id > otherModel.Id);
+
+        @if (Model.Properties.Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+        else
+        {
+            foreach (PropertyInfo property in Model.AllProperties.Where(prop => prop.Name != "Id").OrderByDescending(prop => Model.AllViewProperties["Create"].Any(p => p.Name == prop.Name)).ThenByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+            {
+                if (Model.AllViewProperties["Create"].Any(prop => prop.Name == property.Name))
+                {
+        @:Assert.Equal(@(Model.VarName).@property.Name, actual.@property.Name);
+                }
+                else
+                {
+        @:Assert.Null(actual.@property.Name);
+                }
+            }
+        }
+    }
+
+    [Fact]
+    public void Create_Success_Redirect()
+    {
+        Object expected = controller.StaticRedirectTo(nameof(@(Model.Controller).Index));
+        Object actual = controller.Create(ObjectsFactory.Create@(Model.Views["Create"])(model.Id));
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void Details_NotFound()
+    {
+        Object expected = controller.StaticNotFoundView();
+        Object actual = controller.Details(0);
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void Details_View()
+    {
+        @Model.Model expected = model;
+        @Model.Views["Details"] actual = controller.Details(model.Id).Returns<@Model.Views["Details"]>();
+
+        @if (Model.ViewProperties["Details"].Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+        else
+        {
+            foreach (PropertyInfo property in Model.AllViewProperties["Details"].OrderByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+            {
+                if (Model.AllProperties.Any(prop => prop.Name == property.Name))
+                {
+        @:Assert.Equal(expected.@property.Name, actual.@property.Name);
+                }
+                else
+                {
+        @:Assert.Equal(expected.@(String.Join(".", Regex.Split(property.Name, "(?<=[a-z])(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"))), actual.@property.Name);
+                }
+            }
+        }
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+    }
+
+    [Fact]
+    public void Edit_NotFound()
+    {
+        Object expected = controller.StaticNotFoundView();
+        Object actual = controller.Edit(0);
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void Edit_View()
+    {
+        @Model.Model expected = model;
+        @Model.Views["Edit"] actual = controller.Edit(model.Id).Returns<@Model.Views["Edit"]>();
+
+        @if (Model.ViewProperties["Edit"].Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+        else
+        {
+            foreach (PropertyInfo property in Model.AllViewProperties["Edit"].OrderByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+            {
+                if (Model.AllProperties.Any(prop => prop.Name == property.Name))
+                {
+        @:Assert.Equal(expected.@property.Name, actual.@property.Name);
+                }
+                else
+                {
+        @:Assert.Equal(expected.@(String.Join(".", Regex.Split(property.Name, "(?<=[a-z])(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"))), actual.@property.Name);
+                }
+            }
+        }
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+    }
+
+    [Fact]
+    public void Edit_InvalidModelState_Error()
+    {
+        controller.ModelState.AddModelError("Test", "Error");
+
+        controller.Returns(controller.Edit, ObjectsFactory.Create@(Model.Views["Edit"])(model.Id));
+
+        controller.ModelState.IsSingle("Test", "Error");
+        Assert.Empty(controller.Alerts);
+    }
+    @foreach (PropertyInfo index in Model.Indexes["Edit"])
+    {
+@:
+    @:[Fact]
+    @:public void Edit_Used@(index.Name)_Error()
+    @:{
+    @:    @Model.Views["Edit"] @Model.VarName = ObjectsFactory.Create@(Model.Views["Edit"])(model.Id);
+        if (index.PropertyType == typeof(String))
+        {
+    @:    @(Model.VarName).@(index.Name) = otherModel.@(index.Name).ToUpper();
+        }
+        else
+        {
+    @:    @(Model.VarName).@(index.Name) = otherModel.@(index.Name);
+        }
+@:
+    @:    controller.Returns(controller.Edit, @Model.VarName);
+@:
+    @:    controller.ModelState.IsSingle<@Model.Views["Edit"]>(nameof(@(Model.Views["Edit"]).@(index.Name)), "Unique@(index.Name)");
+    @:    Assert.Empty(controller.Alerts);
+    @:}
+    }
+
+    [Fact]
+    public void Edit_@(Model.ShortName)()
+    {
+        @Model.Views["Edit"] @Model.VarName = ObjectsFactory.Create@(Model.Views["Edit"])(model.Id);
+        @{ IEnumerable<String> changes = Model.ViewProperties["Edit"].Select(property =>
+        {
+            Type type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+            if (type == typeof(DateTime))
+            {
+                return $"{Model.VarName}.{property.Name} = model.{property.Name} += TimeSpan.FromDays(1)";
+            }
+            if (type == typeof(Boolean))
+            {
+                return $"{Model.VarName}.{property.Name} = model.{property.Name} = !model.{property.Name}";
+            }
+            if (type == typeof(String))
+            {
+                return $"{Model.VarName}.{property.Name} = model.{property.Name} += \"Test\"";
+            }
+            if (type.IsEnum)
+            {
+                return $"{Model.VarName}.{property.Name} = model.{property.Name} = {type.Name}.{Enum.GetNames(type).Skip(1).FirstOrDefault()}";
+            }
+
+            return $"{Model.VarName}.{property.Name} = model.{property.Name} += 1";
+        }).OrderByDescending(change => change.Length);
+        }
+@foreach(String change in changes)
+{
+        @:@change;
+}
+
+        controller.Edit(@Model.VarName);
+
+        @Model.Model actual = context.Db<@Model.Model>().Single(@Model.VarName => @(Model.VarName).Id == model.Id);
+
+        @if (Model.Properties.Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+        else
+        {
+            foreach (PropertyInfo property in Model.AllProperties.OrderByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+            {
+        @:Assert.Equal(model.@property.Name, actual.@property.Name);
+            }
+        }
+    }
+
+    [Fact]
+    public void Edit_Success_Redirect()
+    {
+        Object expected = controller.StaticRedirectTo(nameof(@(Model.Controller).Index));
+        Object actual = controller.Edit(ObjectsFactory.Create@(Model.Views["Edit"])(model.Id));
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void Delete_NotFound()
+    {
+        Object expected = controller.StaticNotFoundView();
+        Object actual = controller.Delete(0);
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
+    public void Delete_View()
+    {
+        @Model.Model expected = model;
+        @Model.Views["Edit"] actual = controller.Delete(model.Id).Returns<@Model.Views["Edit"]>();
+
+        @if (Model.ViewProperties["Delete"].Length == 0)
+        {
+        @:Assert.True(false, "Not all properties tested");
+        }
+        else
+        {
+            foreach (PropertyInfo property in Model.AllViewProperties["Delete"].OrderByDescending(prop => prop.Name.Length).ThenBy(prop => prop.Name))
+            {
+                if (Model.AllProperties.Any(prop => prop.Name == property.Name))
+                {
+        @:Assert.Equal(expected.@property.Name, actual.@property.Name);
+                }
+                else
+                {
+        @:Assert.Equal(expected.@(String.Join(".", Regex.Split(property.Name, "(?<=[a-z])(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"))), actual.@property.Name);
+                }
+            }
+        }
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+    }
+
+    [Fact]
+    public void DeleteConfirmed_@(Model.ShortName)()
+    {
+        controller.DeleteConfirmed(model.Id);
+
+        Assert.Single(context.Db<@Model.Model>(), @Model.VarName => @(Model.VarName).Id != model.Id);
+    }
+
+    [Fact]
+    public void DeleteConfirmed_Success_Redirect()
+    {
+        Object expected = controller.StaticRedirectTo(nameof(@(Model.Controller).Index));
+        Object actual = controller.DeleteConfirmed(model.Id);
+
+        Assert.Empty(controller.ModelState);
+        Assert.Empty(controller.Alerts);
+        Assert.Same(expected, actual);
+    }
+}

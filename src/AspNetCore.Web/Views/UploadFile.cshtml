@@ -1,0 +1,21 @@
+@model AspNetCore.Objects.Models.FileUploadModel
+
+<h2>Upload File</h2>
+
+<form asp-action="UploadFile" enctype="multipart/form-data" method="post">
+	<div>
+		<label>Select File:</label>
+		<input asp-for="File" type="file" />
+		<span asp-validation-for="File"></span>
+	</div>
+
+	<div>
+		<label>Description:</label>
+		<input asp-for="Description" type="text" />
+		<span asp-validation-for="Description"></span>
+	</div>
+
+	<button type="submit">Upload</button>
+</form>
+
+@TempData["SuccessMessage"]

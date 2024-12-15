@@ -1,0 +1,172 @@
+@{ String? action = ViewContext.RouteData.Values["action"] as String; }
+
+<!doctype html>
+<html lang="@CultureInfo.CurrentUICulture">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="@Url.Content("~/favicon.ico")">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewBag.Title ?? Resource.ForPage(ViewContext.RouteData.Values))</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/rome/rome.css">
+        <link rel="stylesheet" href="~/css/bootstrap/bootstrap.css">
+        <link rel="stylesheet" href="~/css/font-awesome/solid.css">
+        <link rel="stylesheet" href="~/css/font-awesome/regular.css">
+        <link rel="stylesheet" href="~/css/font-awesome/fontawesome.css">
+        <link rel="stylesheet" href="~/css/mvc-lookup/mvc-lookup.css">
+        <link rel="stylesheet" href="~/css/mvc-grid/mvc-grid.css">
+        <link rel="stylesheet" href="~/css/mvc-tree/mvc-tree.css">
+        <link rel="stylesheet" href="~/css/shared/content.css">
+        <link rel="stylesheet" href="~/css/shared/header.css">
+        <link rel="stylesheet" href="~/css/shared/navigation.css">
+        <link rel="stylesheet" href="~/css/shared/overrides.css">
+        <link rel="stylesheet" href="~/css/shared/table.css">
+        <link rel="stylesheet" href="~/css/shared/widget-box.css">
+        <link rel="stylesheet" action="shared">
+        <link rel="stylesheet" action="@action">
+    </environment>
+    <environment names="Staging,Production">
+        <link asp-append-version="true" rel="stylesheet" href="~/css/site/vendor.min.css">
+        <link asp-append-version="true" rel="stylesheet" href="~/css/site/bundle.min.css">
+        <link asp-append-version="true" action="shared" rel="stylesheet">
+        <link asp-append-version="true" action="@action" rel="stylesheet">
+    </environment>
+</head>
+<body class="private">
+    <partial name="MvcLookup/_Dialog" />
+
+    <div class="header">
+        <div class="btn">
+            <a asp-action="@nameof(Profile.Edit)" asp-controller="@nameof(Profile)" asp-area="">
+                <span class="fa fa-user"></span>
+                <span class="text">@Resource.ForAction(nameof(Profile))</span>
+            </a>
+        </div>
+        @{ ILanguages languages = Context.RequestServices.GetRequiredService<ILanguages>(); }
+        @if (languages.Supported.Length > 1)
+        {
+            <div class="btn dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                    <span class="fa fa-flag"></span>
+                    <span class="text">@Resource.ForAction("Language")</span>
+                </a>
+                <div class="dropdown-menu">
+                    @foreach (Language language in languages.Supported)
+                    {
+                        <a class="dropdown-item" href="@Url.Action(nameof(Home.Index), nameof(Home), new { area = "", language = language == languages.Default ? "" : language.Abbreviation })">
+                            <img src="@Url.Content($"~/img/flags/{language.Abbreviation}.svg")" width="32" height="16" alt="">
+                            @language.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        <div class="btn">
+            <a asp-action="@nameof(Auth.Logout)" asp-controller="@nameof(Auth)" asp-area="">
+                <span class="fa fa-share"></span>
+                <span class="text">@Resource.ForAction(nameof(Auth.Logout))</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="navigation">
+            <div class="navigation-search">
+                <input type="search" placeholder="@Resource.ForAction("Search")" />
+            </div>
+            @{ ISiteMap siteMap = Context.RequestServices.GetRequiredService<ISiteMap>(); }
+            <partial name="_SiteMap" model="@siteMap.For(ViewContext)" />
+        </div>
+        <div class="main-content">
+            <hr />
+
+            <div class="breadcrumb">
+                @{ IAuthorization authorization = Context.RequestServices.GetRequiredService<IAuthorization>(); }
+                @{ SiteMapNode[] breadcrumb = siteMap.BreadcrumbFor(ViewContext); }
+                @{ Int64 accountId = User.Id(); }
+
+                @for (Int32 i = 0; i < breadcrumb.Length; i++)
+                {
+                    SiteMapNode node = breadcrumb[i];
+
+                    if (authorization.IsGrantedFor(accountId, node.Path))
+                    {
+                        <a href="@node.Form(Url)">
+                            <span class="icon @node.IconClass"></span>
+                            <span class="text">@Resource.ForSiteMap(node.Path)</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a>
+                            <span class="icon @node.IconClass"></span>
+                            <span class="text">@Resource.ForSiteMap(node.Path)</span>
+                        </a>
+                    }
+                }
+            </div>
+
+            <hr class="mb-0" />
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="alerts col-12">
+                        @if (TempData["Alerts"] is String alerts)
+                        {
+                            foreach (Alert alert in JsonSerializer.Deserialize<Alerts>(alerts)!)
+                            {
+                                <div id="@alert.Id" class="alert alert-@alert.Type.ToString().ToLowerInvariant() alert-dismissible fade show" data-timeout="@alert.Timeout">
+                                    @alert.Message
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        @DateTime.Now.Year &copy; All rights reserved.
+    </div>
+
+    <environment names="Development">
+        <script src="~/js/moment/moment.js"></script>
+        <script src="~/js/moment/cultures/moment.en.js"></script>
+        <script src="~/js/popper/popper.js"></script>
+        <script src="~/js/rome/rome.standalone.js"></script>
+        <script src="~/js/mvc-lookup/mvc-lookup.js"></script>
+        <script src="~/js/mvc-lookup/cultures/mvc-lookup.en.js"></script>
+        <script src="~/js/mvc-grid/mvc-grid.js"></script>
+        <script src="~/js/mvc-grid/cultures/mvc-grid.en.js"></script>
+        <script src="~/js/mvc-tree/mvc-tree.js"></script>
+        <script src="~/js/bootstrap/bootstrap.js"></script>
+        <script src="~/js/wellidate/wellidate.js"></script>
+        <script src="~/js/shared/widgets/alerts.js"></script>
+        <script src="~/js/shared/widgets/date-picker.js"></script>
+        <script src="~/js/shared/widgets/grid.js"></script>
+        <script src="~/js/shared/widgets/lookup.js"></script>
+        <script src="~/js/shared/widgets/navigation.js"></script>
+        <script src="~/js/shared/widgets/number.js"></script>
+        <script src="~/js/shared/widgets/tooltip.js"></script>
+        <script src="~/js/shared/widgets/tree.js"></script>
+        <script src="~/js/shared/widgets/validator.js"></script>
+        <script action="shared"></script>
+        <script action="@action"></script>
+        <script src="~/js/shared/site.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script asp-append-version="true" src="~/js/site/vendor.min.js"></script>
+        <script asp-append-version="true" action="shared"></script>
+        <script asp-append-version="true" action="@action"></script>
+        <script asp-append-version="true" src="~/js/site/bundle.min.js"></script>
+    </environment>
+</body>
+</html>

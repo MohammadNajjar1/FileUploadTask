@@ -1,0 +1,45 @@
+@model ModuleModel
+using AspNetCore.Data;
+using AspNetCore.Objects;
+
+namespace AspNetCore.Services;
+
+public class @(Model.Model)Service : AService
+{
+    public @(Model.Model)Service(IUnitOfWork unitOfWork)
+        : base(unitOfWork)
+    {
+    }
+
+    public TView? Get<TView>(Int64 id) where TView : AView
+    {
+        return UnitOfWork.GetAs<@Model.Model, TView>(id);
+    }
+    public IQueryable<@Model.Views["Index"]> GetViews()
+    {
+        return UnitOfWork
+            .Select<@Model.Model>()
+            .To<@Model.Views["Index"]>()
+            .OrderByDescending(@Model.VarName => @(Model.VarName).Id);
+    }
+
+    public void Create(@Model.Views["Create"] view)
+    {
+        @Model.Model @Model.VarName = UnitOfWork.To<@Model.Model>(view);
+
+        UnitOfWork.Insert(@Model.VarName);
+        UnitOfWork.Commit();
+    }
+    public void Edit(@Model.Views["Edit"] view)
+    {
+        @Model.Model @Model.VarName = UnitOfWork.To<@Model.Model>(view);
+
+        UnitOfWork.Update(@Model.VarName);
+        UnitOfWork.Commit();
+    }
+    public void Delete(Int64 id)
+    {
+        UnitOfWork.Delete<@Model.Model>(id);
+        UnitOfWork.Commit();
+    }
+}

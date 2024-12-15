@@ -1,0 +1,28 @@
+{
+    "Headers": {
+        "Account": "Account",
+        "Accounts": "Accounts",
+        "Profile": "Profile",
+        "Role": "Role",
+        "Roles": "Roles"
+    },
+    "Titles": {
+        "Administration/Accounts/Create": "Account creation",
+        "Administration/Accounts/Details": "Account details",
+        "Administration/Accounts/Edit": "Account edit",
+        "Administration/Accounts/Index": "Accounts",
+        "Administration/Roles/Create": "Role creation",
+        "Administration/Roles/Delete": "Role deletion",
+        "Administration/Roles/Details": "Role details",
+        "Administration/Roles/Edit": "Role edit",
+        "Administration/Roles/Index": "Roles",
+        "Auth/Login": "Login",
+        "Auth/Recover": "Recover",
+        "Auth/Reset": "Reset",
+        "Home/Error": "Error",
+        "Home/Index": "Home",
+        "Home/NotFound": "Not Found",
+        "Profile/Delete": "Profile deletion",
+        "Profile/Edit": "Profile edit"
+    }
+}

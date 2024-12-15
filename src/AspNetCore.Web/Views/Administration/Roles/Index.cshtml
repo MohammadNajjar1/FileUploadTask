@@ -1,0 +1,32 @@
+@model IQueryable<RoleView>
+
+<div class="col">
+    <div class="widget-box">
+        <div class="widget-header">
+            <span class="icon fa fa-th"></span>
+            <h5>@Resource.ForHeader("Roles")</h5>
+            <div class="widget-header-buttons">
+                <authorize action="@nameof(Roles.Create)">
+                    <a asp-action="@nameof(Roles.Create)" class="btn">
+                        <span class="far fa-file"></span>
+                        <span class="text">@Resource.ForAction(nameof(Roles.Create))</span>
+                    </a>
+                </authorize>
+            </div>
+        </div>
+        <div class="widget-content">
+            @(Html
+                .Grid(Model)
+                .Build(columns =>
+                {
+                    columns.AddAction(nameof(Roles.Details), "fa fa-info");
+                    columns.AddAction(nameof(Roles.Edit), "fa fa-pencil-alt");
+                    columns.AddAction(nameof(Roles.Delete), "fa fa-times");
+
+                    columns.AddProperty(model => model.Title);
+                })
+                .ApplyDefaults()
+            )
+        </div>
+    </div>
+</div>

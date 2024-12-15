@@ -1,0 +1,21 @@
+@model AccountResetView
+
+<div class="title text-end">@Resource.ForPage(ViewContext.RouteData.Values)</div>
+
+<hr />
+
+<form asp-antiforgery="true">
+    <partial name="_AuthAlerts" />
+
+    <div class="input-group">
+        <span class="fa fa-lock"></span>
+        <input asp-for="NewPassword" asp-placeholder type="password" />
+        <span class="input-error fa fa-exclamation-triangle" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="-"></span>
+    </div>
+
+    <div class="d-grid">
+        <button class="btn btn-primary mt-3 mb-2">@Resource.ForAction("Submit")</button>
+    </div>
+</form>
+
+<hr />

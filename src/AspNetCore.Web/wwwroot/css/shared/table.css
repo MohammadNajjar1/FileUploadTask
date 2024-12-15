@@ -1,0 +1,40 @@
+table .action-cell {
+    min-width: calc(1.5em + 1rem);
+    width: calc(1.5em + 1rem);
+    text-align: center;
+}
+
+table .action-cell + .action-cell {
+    min-width: calc(1.5em + 0.5rem);
+    width: calc(1.5em + 0.5rem);
+    border-left: none;
+    padding-left: 0;
+}
+
+table .action-cell a {
+    transition: transform 0.3s;
+    border-radius: 4px;
+    line-height: 2.5;
+    font-size: 0.5em;
+    display: block;
+    margin: 0 auto;
+    color: #ffffff;
+    height: 2.5em;
+    width: 2.5em;
+}
+
+table .action-cell.details a {
+    background-color: #5cb85c;
+}
+
+table .action-cell.edit a {
+    background-color: #f0ad4e;
+}
+
+table .action-cell.delete a {
+    background-color: #d9534f;
+}
+
+table .action-cell a:hover {
+    transform: scale(1.2);
+}

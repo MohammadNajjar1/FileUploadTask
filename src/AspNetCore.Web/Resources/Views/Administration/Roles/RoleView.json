@@ -1,0 +1,9 @@
+{
+    "Titles": {
+        "Permissions": "Permissions",
+        "Title": "Title"
+    },
+    "Validations": {
+        "UniqueTitle": "Title is already being used."
+    }
+}

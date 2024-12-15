@@ -1,0 +1,74 @@
+@model ModuleModel
+@@model @Model.Views["Delete"]
+
+<div class="col">
+    <div class="widget-box readonly">
+        <div class="widget-header">
+            <span class="icon fa fa-th-list"></span>
+            <h5>@@Resource.ForHeader("@(Model.Model)")</h5>
+            <div class="widget-header-buttons">
+                <authorize action="@("@nameof")(@(Model.Controller).Details)">
+                    <a asp-action="@("@nameof")(@(Model.Controller).Details)" asp-route-id="@@Model.Id" class="btn">
+                        <span class="fa fa-info"></span>
+                        <span class="text">@@Resource.ForAction(nameof(@(Model.Controller).Details))</span>
+                    </a>
+                </authorize>
+                <authorize action="@("@nameof")(@(Model.Controller).Edit)">
+                    <a asp-action="@("@nameof")(@(Model.Controller).Edit)" asp-route-id="@@Model.Id" class="btn">
+                        <span class="fa fa-pencil-alt"></span>
+                        <span class="text">@@Resource.ForAction(nameof(@(Model.Controller).Edit))</span>
+                    </a>
+                </authorize>
+            </div>
+        </div>
+        <div class="widget-content">
+            @foreach (PropertyInfo property in Model.ViewProperties["Delete"])
+            {
+                Type type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+            <div class="form-group row">
+                <div class="control-label col-md-4 col-xl-2">
+                    <label asp-for="@property.Name"></label>
+                </div>
+                <div class="control-content col-md-8 col-xl-4">
+                    @if (type == typeof(String))
+                    {
+                    <input asp-for="@property.Name" />
+                    }
+                    else if (type == typeof(MvcTree))
+                    {
+                    <div mvc-tree-for="@property.Name" hide-depth="3"></div>
+                    }
+                    else if (type == typeof(DateTime))
+                    {
+                    <input asp-for="@property.Name" asp-format="{0:d}" class="date-picker" />
+                    }
+                    else if (type == typeof(Boolean))
+                    {
+                    <input asp-for="@property.Name" />
+                    }
+                    else if (type.IsEnum)
+                    {
+                    <select asp-for="@property.Name" asp-items="Html.GetEnumSelectList<@type.Name>()"></select>
+                    }
+                    else if (Model.Relations.GetValueOrDefault(property.Name, null) is String relation)
+                    {
+                    <div mvc-lookup-for="@property.Name" handler="@("@nameof")(Lookup.@relation)"></div>
+                    }
+                    else
+                    {
+                    <input asp-for="@property.Name" />
+                    }
+                </div>
+            </div>
+            }
+            <form asp-antiforgery="true">
+                <div class="form-group row">
+                    <div class="control-actions col-xl-6">
+                        <button class="btn btn-primary">@@Resource.ForAction("Submit")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+@{ String? action = ViewContext.RouteData.Values["action"] as String; }
+
+<!doctype html>
+<html lang="@CultureInfo.CurrentUICulture">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="@Url.Content("~/favicon.ico")">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewBag.Title ?? Resource.ForPage(ViewContext.RouteData.Values))</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/rome/rome.css">
+        <link rel="stylesheet" href="~/css/bootstrap/bootstrap.css">
+        <link rel="stylesheet" href="~/css/font-awesome/solid.css">
+        <link rel="stylesheet" href="~/css/font-awesome/regular.css">
+        <link rel="stylesheet" href="~/css/font-awesome/fontawesome.css">
+        <link rel="stylesheet" href="~/css/mvc-lookup/mvc-lookup.css">
+        <link rel="stylesheet" href="~/css/mvc-grid/mvc-grid.css">
+        <link rel="stylesheet" href="~/css/mvc-tree/mvc-tree.css">
+        <link rel="stylesheet" href="~/css/shared/content.css">
+        <link rel="stylesheet" href="~/css/shared/header.css">
+        <link rel="stylesheet" href="~/css/shared/navigation.css">
+        <link rel="stylesheet" href="~/css/shared/overrides.css">
+        <link rel="stylesheet" href="~/css/shared/table.css">
+        <link rel="stylesheet" href="~/css/shared/widget-box.css">
+        <link rel="stylesheet" action="shared">
+        <link rel="stylesheet" action="@action">
+    </environment>
+    <environment names="Staging,Production">
+        <link asp-append-version="true" rel="stylesheet" href="~/css/site/vendor.min.css">
+        <link asp-append-version="true" rel="stylesheet" href="~/css/site/bundle.min.css">
+        <link asp-append-version="true" rel="stylesheet" action="shared">
+        <link asp-append-version="true" rel="stylesheet" action="@action">
+    </environment>
+</head>
+<body class="public">
+    <div class="public-content">
+        @RenderBody()
+    </div>
+
+    <environment names="Development">
+        <script src="~/js/moment/moment.js"></script>
+        <script src="~/js/moment/cultures/moment.en.js"></script>
+        <script src="~/js/popper/popper.js"></script>
+        <script src="~/js/rome/rome.standalone.js"></script>
+        <script src="~/js/mvc-lookup/mvc-lookup.js"></script>
+        <script src="~/js/mvc-lookup/cultures/mvc-lookup.en.js"></script>
+        <script src="~/js/mvc-grid/mvc-grid.js"></script>
+        <script src="~/js/mvc-grid/cultures/mvc-grid.en.js"></script>
+        <script src="~/js/mvc-tree/mvc-tree.js"></script>
+        <script src="~/js/bootstrap/bootstrap.js"></script>
+        <script src="~/js/wellidate/wellidate.js"></script>
+        <script src="~/js/shared/widgets/alerts.js"></script>
+        <script src="~/js/shared/widgets/date-picker.js"></script>
+        <script src="~/js/shared/widgets/grid.js"></script>
+        <script src="~/js/shared/widgets/lookup.js"></script>
+        <script src="~/js/shared/widgets/navigation.js"></script>
+        <script src="~/js/shared/widgets/number.js"></script>
+        <script src="~/js/shared/widgets/tooltip.js"></script>
+        <script src="~/js/shared/widgets/tree.js"></script>
+        <script src="~/js/shared/widgets/validator.js"></script>
+        <script action="shared"></script>
+        <script action="@action"></script>
+        <script src="~/js/shared/site.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script asp-append-version="true" src="~/js/site/vendor.min.js"></script>
+        <script asp-append-version="true" action="shared"></script>
+        <script asp-append-version="true" action="@action"></script>
+        <script asp-append-version="true" src="~/js/site/bundle.min.js"></script>
+    </environment>
+</body>
+</html>

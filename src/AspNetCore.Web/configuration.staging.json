@@ -1,0 +1,13 @@
+{
+    "Cookies": {
+        "Antiforgery": ".AspNetCore-Stage-Token",
+        "Auth": ".AspNetCore-Stage-Auth",
+        "TempData": ".AspNetCore-Stage-Temp",
+        "Session": ".AspNetCore-Stage-Session"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Warning"
+        }
+    }
+}
